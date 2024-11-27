@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { env } from '../config/index.js';
 
-export const signup = async (req,res)=>{
+export const signup = async (req,res,next)=>{
   try{
     const hashedPassword = await bcrypt.hash(req.body.password,10)
     await Model.create({
@@ -71,8 +71,14 @@ export const deleteUser = async (req,res,next) =>{
     const user = await Model.findById(req.params.id)
     if(!user) return res.status(404).json ("json not found")
 
-    await Model.findOneAndDelete(req.params.id)
-    res.status(200).json(`L'utilisateur avec l'id ${req.params.id} a été supprimé`)
+      if (req.params.id !== req.user.id){
+        res.status(200).json("Vous n'etes pas l'utilisateur du compte que vous voulez supprimé")
+      }
+        await Model.findOneAndDelete(req.params.id)
+        res.status(200).json(`L'utilisateur avec l'id ${req.params.id} a été supprimé`)
+      
+      
+    
   }
   catch(error){
     next(error)
@@ -84,12 +90,20 @@ export const updateUser = async (req,res,next)=>{
     const user = await Model.findById(req.params.id)
     if(!user) return res.status(404).json ("json not found")
 
-    const userUpdated = await Model.findByIdAndUpdate(
-      req.params.id,
-      {$set:req.body},
-      {new:true}
-    )
-    res.status(200).json(userUpdated)
+    if (req.params.id !== req.user.id){
+        return res.status(200).json("Vous n'etes pas l'utilisateur du compte que vous voulez supprimé")
+      }
+
+        const userUpdated = await Model.findByIdAndUpdate(
+          req.params.id,
+          {$set:req.body},
+          {new:true}
+        )
+        res.status(200).json(userUpdated)
+        
+      
+
+    
   }
   catch(error){
     next(error)

@@ -24,7 +24,11 @@ export const all = async (req,res,next)=>{
 export const avisArticlebyId = async (req,res,next)=>{
     try{
         const avis = await Model.findById(req.params.id).populate('avis')
-        res.status(200).json(avis.avis)    
+          
+        if (!avis){
+            return res.status(404).json("l'article n'existe pas")
+        } 
+        res.status(200).json(avis.avis) 
     }
     catch(error){
         next(error)
@@ -44,7 +48,7 @@ export const allcroissant = async (req,res,next)=>{
 
 export const alldecroissant = async (req,res,next)=>{
     try{
-        const article = await Model.find().sort({price:-1}).limit(2)
+        const article = await Model.find().sort({price:-1})
         res.status(200).json(article)
     }
     catch(error){
