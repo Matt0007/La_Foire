@@ -8,6 +8,7 @@ import cors from "cors";
 import userRoutes from "./routes/user.router.js"
 import articleRoutes from './routes/article.router.js'
 import avisRoutes from'./routes/avis.router.js'
+import souhaitRoutes from './routes/souhait.router.js'
 // APP EXPRESS
 const app = express()
 
@@ -29,6 +30,8 @@ app.use(cors());
 app.use("/api/user",userRoutes)
 app.use("/api/article",articleRoutes)
 app.use('/api/avis',avisRoutes)
+app.use('/api/souhait',souhaitRoutes)
+
 // SERVER
 app.listen(PORT, () => {
   console.log(`LISTENING AT http://localhost:${PORT}`);

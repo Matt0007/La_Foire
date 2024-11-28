@@ -6,7 +6,7 @@ export const post = async (req,res,next)=>{
     try{
         const existingAvis = await Model.findOne({
         user: req.user.id,  
-        article: req.body.article
+        article: req.params.id
     });
 
     if (existingAvis) {
@@ -15,12 +15,13 @@ export const post = async (req,res,next)=>{
         });
     }
 
-        const verifArticle = await ModelArticle.findById(req.body.article)
+        const verifArticle = await ModelArticle.findById(req.params.id)
         if (!verifArticle){
             return res.status(404).json("l'article n'existe pas")
         }
         const avis = await Model.create({
             ...req.body,
+            article:req.params.id,
             user:req.user.id
         })
         
@@ -41,6 +42,22 @@ export const getRating = async (req,res,next)=>{
     try{
         const avisNote = await Model.find().sort({rating:1})
         res.status(200).json(avisNote)
+    }
+    catch(error){
+        next(error)
+    }
+}
+
+export const getRatingById = async (req,res,next)=>{
+    try{
+        const AvisNote = await ModelArticle.findById(req.params.id).populate({
+            path:'avis',
+            options:{
+                sort:{rating:1},
+                limit:2
+            }
+        })
+        res.status(200).json(AvisNote.avis)
     }
     catch(error){
         next(error)
@@ -121,7 +138,6 @@ try{
     const verifLike = await Model.findOne({
         like:{
             $elemMatch:{
-            liker:true,
             user:req.user.id   
             }
             
