@@ -178,4 +178,15 @@ catch(error){
 }
 
 
-
+export const likeByAvis = async (req,res,next)=>{
+    try{
+        const avis = await Model.findById(req.params.id)
+        if (!avis){
+            return res.status(404).json("l'avis n'existe pas")
+        }
+        res.status(200).json(avis.like)
+    }
+    catch(error){
+        next(error)
+    }
+}
