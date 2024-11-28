@@ -5,6 +5,7 @@ import { env } from '../config/index.js';
 
 export const signup = async (req,res,next)=>{
   try{
+
     const hashedPassword = await bcrypt.hash(req.body.password,10)
     await Model.create({
       ...req.body,
@@ -55,6 +56,15 @@ export const getUsers = async(req,res)=>{
     console.log(error);
   }
 }
+export const getUsersActive = async(req,res,next)=>{
+  try{
+    const usersActif = await Model.find({isActive:true})
+    res.status(200).json(usersActif)
+  }
+  catch(error){
+    next(error)
+  }
+}
 
 export const getUserById = async (req,res)=>{
   try{
@@ -91,7 +101,7 @@ export const updateUser = async (req,res,next)=>{
     if(!user) return res.status(404).json ("json not found")
 
     if (req.params.id !== req.user.id){
-        return res.status(200).json("Vous n'etes pas l'utilisateur du compte que vous voulez supprimé")
+        return res.status(400).json("Vous n'etes pas l'utilisateur du compte que vous voulez supprimé")
       }
 
         const userUpdated = await Model.findByIdAndUpdate(
@@ -100,10 +110,7 @@ export const updateUser = async (req,res,next)=>{
           {new:true}
         )
         res.status(200).json(userUpdated)
-        
       
-
-    
   }
   catch(error){
     next(error)

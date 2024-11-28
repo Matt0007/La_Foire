@@ -19,7 +19,17 @@ const avisSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    
+    like:[
+        {
+            liker:{
+                type:Boolean
+            },
+            user:{
+                type:mongoose.Schema.Types.ObjectId,
+                ref:'User'
+            }
+        }
+    ]
 
 },
 {
